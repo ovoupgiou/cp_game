@@ -12,7 +12,6 @@ canvas{display:block;width:100%;height:100%}
 #ov p{margin:4px 0 22px;font-size:16px;line-height:1.5;color:#c3c7d0;max-width:340px}
 .g{background:linear-gradient(90deg,#3b6cff,#7aa7ff);-webkit-background-clip:text;background-clip:text;color:transparent}
 #go{font:inherit;font-size:19px;font-weight:700;padding:15px 34px;border:0;border-radius:14px;background:#3b6cff;color:#fff;box-shadow:0 8px 30px rgba(59,108,255,.45)}
-#lg{margin-top:16px;font:inherit;font-size:13px;font-weight:700;color:#c3c7d0;background:none;border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:5px 12px}
 svg{width:min(60vw,240px);height:auto;animation:f 3s ease-in-out infinite}
 @keyframes f{50%{transform:translateY(-6px)}}
 #bk{position:fixed;z-index:10;top:calc(env(safe-area-inset-top,0px) + 12px);left:50%;transform:translateX(-50%);font-size:14px;font-weight:700;color:#fff;text-decoration:none;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:6px 16px;backdrop-filter:blur(6px)}
@@ -29,7 +28,7 @@ svg{width:min(60vw,240px);height:auto;animation:f 3s ease-in-out infinite}
 </style></head><body>
 <canvas id="c"></canvas>
 <div id="hud"><span class="p" id="pg">0</span><span class="p" id="lv">Best 0</span></div>
-<a id="bk" href="index.html">← Menu</a>
+<a id="bk" href="index.html">← Main Menu</a>
 <div id="ov"></div>
 <script>
 const LED=['#3b6cff','#ff8a2b','#19c7b8','#a64bff'],LH=22;
@@ -39,8 +38,7 @@ const pt=s=>{const m=1-s;return[0,1].map(k=>m*m*m*P[0][k]+3*m*m*s*P[1][k]+3*m*s*
 const s0=Math.max(0,p-.12),s1=Math.min(1,p+.12);
 for(const[w,al]of[[12,.18],[5,.9]]){x.beginPath();for(let k=0;k<=14;k++){const q=pt(s0+(s1-s0)*k/14);k?x.lineTo(q[0],q[1]):x.moveTo(q[0],q[1])}x.strokeStyle=c;x.globalAlpha=al;x.lineWidth=w;x.stroke()}x.globalAlpha=1})}
 function idle(n){if(run){idleOn=false;return}x.drawImage(oc,0,0,W,H);glow(n/1000);requestAnimationFrame(idle)}
-const T={en:{t:'Layer by <span class="g">Layer</span>',d:'Tap to print each layer right on top of the last one.<br>Perfect alignment keeps your tower wide. Miss it and the print collapses!',s:'Start',l:'Print collapsed',c:n=>'You printed '+n+' layers.',n:'New record! 🎉',b:n=>'Best: '+n,p:'Play again',pf:'PERFECT'},
-tr:{t:'Katman <span class="g">Katman</span>',d:'Her katmanı bir öncekinin tam üstüne basmak için dokun.<br>Tam hizalarsan kule genişliğini korur. Kaçırırsan baskı çöker!',s:'Başla',l:'Baskı çöktü',c:n=>n+' katman bastın.',n:'Yeni rekor! 🎉',b:n=>'En iyi: '+n,p:'Tekrar oyna',pf:'MÜKEMMEL'}};
+const T={en:{t:'Layer by <span class="g">Layer</span>',d:'Tap to print each layer right on top of the last one.<br>Perfect alignment keeps your tower wide. Miss it and the print collapses!',s:'Start',l:'Print collapsed',c:n=>'You printed '+n+' layers.',n:'New record! 🎉',b:n=>'Best: '+n,p:'Play again',pf:'PERFECT'}};
 const PR=`<svg viewBox="0 0 200 150" stroke="#fff" stroke-width="3" stroke-linejoin="round"><rect x="20" y="132" width="160" height="14" rx="6" fill="#d8dbe2"/><rect x="50" y="110" width="100" height="22" fill="#3b6cff"/><rect x="56" y="88" width="94" height="22" fill="#ff8a2b"/><rect x="56" y="66" width="86" height="22" fill="#19c7b8"/><rect x="64" y="44" width="78" height="22" fill="#a64bff"/><rect x="82" y="2" width="30" height="34" rx="7" fill="#16161a"/><rect x="87" y="29" width="20" height="3" fill="#ff8a2b" stroke="none"/><path d="M90 36h14l-4 8h-6z" fill="#e0a43b"/></svg>`;
 let run=false,alive=false,lay=[],cur,db=[],fx=[],cam=0,score=0,combo=0,best=0,newb=0,mode=0,L='en',last=0,idleOn=false,W,H,D,oc;
 try{best=+localStorage.getItem('lbl')||0}catch(e){}
@@ -52,15 +50,14 @@ o.lineWidth=3;o.lineCap='round';
 for(const[c,a,b,d,e]of S){const l=o.createLinearGradient(0,0,W,0);l.addColorStop(0,c+'00');l.addColorStop(.5,c+'77');l.addColorStop(1,c+'00');o.strokeStyle=l;o.shadowColor=c;o.shadowBlur=18;o.beginPath();o.moveTo(-W*.1,a*H);o.bezierCurveTo(W*.3,b*H,W*.6,d*H,W*1.1,e*H);o.stroke()}}
 function rs(){D=devicePixelRatio||1;W=innerWidth;H=innerHeight;cv.width=W*D;cv.height=H*D;x.setTransform(D,0,0,D,0,0);bg();if(!run)x.drawImage(oc,0,0,W,H)}
 rs();addEventListener('resize',rs);
-function pills(){pg.textContent=score;lv.textContent=(L=='tr'?'En iyi ':'Best ')+best}
+function pills(){pg.textContent=score;lv.textContent='Best '+best}
 function show(m){mode=m;const t=T[L];
-ov.innerHTML=(m?'':PR)+'<h1>'+(m?t.l:t.t)+'</h1><p>'+(m?t.c(score)+'<br>'+(newb?t.n:t.b(best)):t.d)+'</p>'+(m?'<div id="lb" class="lb"></div>':'')+'<button id="go">'+(m?t.p:t.s)+'</button><button id="lg">'+(L=='tr'?'EN':'TR')+'</button>'+(m?'':who());ov.style.display='flex';if(m)lbFill();pills();if(!run&&!idleOn){idleOn=true;requestAnimationFrame(idle)}}
-ov.onclick=e=>{if(e.target.id=='go')PL?start():regForm(start);if(e.target.id=='chg'){PL=null;try{localStorage.removeItem('th_player')}catch(_){}show(mode)}if(e.target.id=='lg'){L=L=='tr'?'en':'tr';show(mode)}};
+ov.innerHTML=(m?'':PR)+'<h1>'+(m?t.l:t.t)+'</h1><p>'+(m?t.c(score)+'<br>'+(newb?t.n:t.b(best)):t.d)+'</p>'+(m?'<div id="lb" class="lb"></div>':'')+'<button id="go">'+(m?t.p:t.s)+'</button>'+(m?'':who());ov.style.display='flex';if(m)lbFill();pills();if(!run&&!idleOn){idleOn=true;requestAnimationFrame(idle)}}
+ov.onclick=e=>{if(e.target.id=='go')PL?start():regForm(start);if(e.target.id=='chg'){PL=null;try{localStorage.removeItem('th_player')}catch(_){}show(mode)}};
 const GS_URL='',SB_URL='https://ufzhsedfkihbuybxfgfy.supabase.co',SB_KEY='sb_publishable_Xpx7sKguWrzAUIMI-JLreg_dYE1d5qP';
 const sb=(fn,body)=>fetch(SB_URL+'/rest/v1/rpc/'+fn,{method:'POST',headers:{'Content-Type':'application/json',apikey:SB_KEY,...(SB_KEY.startsWith('eyJ')?{Authorization:'Bearer '+SB_KEY}:{})},body:JSON.stringify(body)});
 const GK='tower';
-const RT={en:{h:'Join the leaderboard',nm:'Username',em:'Email',c1:'I agree that my username, email and score are stored for the leaderboard and prize draw.',c2:'Send me news about Co Print (optional).',go:'Continue',bad:'Check your username (2-16 characters) and email.',need:'Please tick the first box to continue.',as:'Playing as',ch:'Change',top:'Top players'},
-tr:{h:'Skor tablosuna katıl',nm:'Kullanıcı adı',em:'E-posta',c1:'Kullanıcı adımın, e-postamın ve skorumun skor tablosu ve ödül çekilişi için saklanmasını kabul ediyorum.',c2:'Co Print hakkında haber almak istiyorum (isteğe bağlı).',go:'Devam',bad:'Kullanıcı adını (2-16 karakter) ve e-postayı kontrol et.',need:'Devam etmek için ilk kutuyu işaretle.',as:'Oyuncu',ch:'Değiştir',top:'En iyiler'}};
+const RT={en:{h:'Join the leaderboard',nm:'Username',em:'Email',c1:'I agree that my username, email and score are stored for the leaderboard and prize draw.',c2:'Send me news about Co Print (optional).',go:'Continue',bad:'Check your username (2-16 characters) and email.',need:'Please tick the first box to continue.',as:'Playing as',ch:'Change',top:'Top players'}};
 let PL=null;try{PL=JSON.parse(localStorage.getItem('th_player')||'null')}catch(_){}
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const lbKey=()=>'th_lb_'+GK;
