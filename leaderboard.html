@@ -33,18 +33,17 @@ h1{margin:0 0 14px;text-align:center;font-size:clamp(30px,5vw,56px);font-weight:
 <i class="s" style="top:38%;transform:rotate(6deg);--c:#ff8a2b;animation-duration:5.4s;animation-delay:-1.5s"></i>
 <i class="s" style="top:66%;transform:rotate(-5deg);--c:#19c7b8;animation-duration:6.2s;animation-delay:-3s"></i>
 <i class="s" style="top:86%;transform:rotate(5deg);--c:#a64bff;animation-duration:5s;animation-delay:-2s"></i>
-<div id="bar"><a id="bk" href="index.html">← Menu</a><span><button id="fs">⛶</button> <button id="lg">TR</button></span></div>
+<div id="bar"><a id="bk" href="index.html">← Main Menu</a><span><button id="fs">⛶</button></span></div>
 <main><h1 id="h"></h1><div id="tabs"></div><div id="cols"></div><div id="up"></div></main>
 <script>
 const GS_URL='',SB_URL='https://ufzhsedfkihbuybxfgfy.supabase.co',SB_KEY='sb_publishable_Xpx7sKguWrzAUIMI-JLreg_dYE1d5qP';
 const G=['catch','tower'];
-const T={en:{h:'<span class="g">Leaderboard</span>',n:{catch:'Catch the Toolhead',tower:'Layer by Layer'},u:'Updated',e:'No scores yet. Be the first!',x:'Could not load scores. Retrying…',b:'← Menu'},
-tr:{h:'<span class="g">Skor</span> Tablosu',n:{catch:'Toolhead Yakala',tower:'Katman Katman'},u:'Güncellendi',e:'Henüz skor yok. İlk sen ol!',x:'Skorlar yüklenemedi, tekrar deneniyor…',b:'← Menü'}};
+const T={en:{h:'<span class="g">Leaderboard</span>',n:{catch:'Catch the Toolhead',tower:'Layer by Layer'},u:'Updated',e:'No scores yet. Be the first!',x:'Could not load scores. Retrying…',b:'← Main Menu'}};
 let L='en',cur='catch',data={},err=false,ts=0;
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const $=id=>document.getElementById(id);
 function draw(){const t=T[L];
-$('h').innerHTML=t.h;$('bk').textContent=t.b;$('lg').textContent=L=='tr'?'EN':'TR';
+$('h').innerHTML=t.h;$('bk').textContent=t.b;
 $('tabs').innerHTML=G.map(g=>'<button data-g="'+g+'" class="'+(g==cur?'on':'')+'">'+t.n[g]+'</button>').join('');
 $('cols').innerHTML=G.map(g=>{const a=data[g];let rows;
 if(!a)rows='<div class="em">'+(err?t.x:'…')+'</div>';
@@ -54,7 +53,6 @@ return '<section class="col'+(g==cur?' on':'')+'"><h2>'+t.n[g]+'</h2>'+rows+'</s
 $('up').textContent=ts?t.u+' '+new Date(ts).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'}):''}
 async function load(){try{await Promise.all(G.map(async g=>{const r=await(SB_URL?fetch(SB_URL+'/rest/v1/rpc/get_top',{method:'POST',headers:{'Content-Type':'application/json',apikey:SB_KEY,...(SB_KEY.startsWith('eyJ')?{Authorization:'Bearer '+SB_KEY}:{})},body:JSON.stringify({p_game:g})}):fetch(GS_URL+'?game='+g+'&t='+Date.now()));const d=await r.json();if(!Array.isArray(d))throw 0;data[g]=d}));err=false;ts=Date.now()}catch(_){err=true}draw()}
 $('tabs').onclick=e=>{const g=e.target.dataset&&e.target.dataset.g;if(g){cur=g;draw()}};
-$('lg').onclick=()=>{L=L=='tr'?'en':'tr';draw()};
 $('fs').onclick=()=>{const d=document.documentElement;try{document.fullscreenElement?document.exitFullscreen():d.requestFullscreen&&d.requestFullscreen()}catch(_){}};
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)load()});
 setInterval(()=>{if(!document.hidden)load()},10000);
